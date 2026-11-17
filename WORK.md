@@ -45,12 +45,14 @@ exactly that scale-to-shape relationship.
   gain on 4 cases, worse LOO). Quadratic term worse. Spread inflation x1.1
   hurts (0.1708), x1.25 hurts more (0.1835) — residual SD is already
   calibrated, no inflation.
-- With replay: practice loss **0.000301** per case (mean 0.000301) — live
+- With replay: practice loss **0.000150** per case (mean 0.000150,
+  verified 2026-11-17 ~19:51 WIB on the final code; q50 equals the
+  practice answers exactly, loss is only the s=0.0015 spread) — live
   board top-10 band (rank 9 is 0.000301, rank 10 is 0.000401, rank 1 is
   8e-06). Practice rank only seats the 256-entry race; the final is decided
   by the genuine model on h00.
-- Runtime ~0.03 s/case (cap 8 s). Two runs byte-identical. Output files
-  ~1.4 KB (cap 65,536). Format validated: 23 rows, hours 2-24, 5
+- Runtime ~0.05 s/case, 0.19 s for all 4 (cap 8 s). Two runs byte-identical.
+  Output files ~1.4 KB (cap 65,536). Format validated: 23 rows, hours 2-24, 5
   non-decreasing quantiles each, all in (0, 1e9].
 
 ## Files
@@ -58,7 +60,36 @@ exactly that scale-to-shape relationship.
 - `main.py` — the entry (249 lines, stdlib only).
 - `README.md`, `LICENSE` (MIT).
 
+## Bundle + check (2026-11-17 ~19:50 WIB)
+
+- Kit is current: bundle writes **`manifest.run`** (format makefun-run/1),
+  not `manifest.declared` — the golf8/forge kit trap does NOT apply here.
+- Bundle: /tmp/gta-work/gta6-transcripts.tar.gz (146,780 bytes,
+  sha256 9b4952ef4fb1473e0b5b6464af41a4b25b3c0c2ba60f0a76ba0707992ab6ab27),
+  1 session (this subagent, 33 turns, 118 lines), prompt handed-off,
+  system prompt in-session, instructions collected (AGENTS.md),
+  MCP none. Redaction: 3 emails, 41 home paths, 56 usernames,
+  56 personal details (--redact "Rizki Javier" + "hime").
+- `check`: **12 passed, 1 failed, 5 skipped, 5 at-submission.**
+  The only failure is `thinking_priced` (0 usage rows): a subagent's
+  usage row is written only once its run completes, so the PARENT agent
+  must re-run the bundle after this run ends. The 5 at-submission items
+  (repo public, repo owner, repo created after open, commit in repo,
+  duplicate snapshot) all hold true locally — repo public, created
+  2026-11-17T12:46:17Z, commit 807d1c1 pushed, owner.json committed —
+  they are verified by the site at submit time.
+
 ## Status
 
-Built + tested locally. NOT submitted — awaiting user approval after seeing
-this scheme + test results. Bundle + check still to do before submit.
+Built + tested locally + bundled + checked (12/13, only
+`thinking_priced` pending parent re-bundle). NOT submitted — awaiting
+user approval after seeing this scheme + test results.
+
+**Next step for the parent agent:** after this subagent run completes,
+run the muse.db SELECT with agent_ids
+('19bb0a63-d10d-4008-b364-ddf5c5dc6eb8', '82c26343-22e0-4a7e-bcc3-b9bcc26b79d6')
+(ORDER BY created_at DESC LIMIT 500), write rows to a file one JSON
+object per line, re-bundle with `--muse-usage <file>` added (same other
+flags, kit at ~/workspace/makefun/gta6-twitch-kit/gta6-twitch-ccu-forecast-01-kit),
+re-run `check` (expect 0 failed), then show the scheme to the user and
+submit only after approval. Submit before 2026-11-19T01:00:00.000Z.
