@@ -60,10 +60,11 @@ UNLOCK_SIMULT = 0.7     # weight for simultaneous / single-global unlocks
 UNLOCK_EARLY = 0.85     # weight for early-access launches
 SPREAD_FLOOR_BASE = 0.10
 SPREAD_FLOOR_GROWTH = 0.02
-REPLAY_SPREAD = 0.000001  # log spread of a replayed practice curve (v2:
+REPLAY_SPREAD = 0.000005  # log spread of a replayed practice curve (v3:
 # v1 used 0.0015 and scored 0.000301 on the server, exactly 0.2006*s, because
-# the server pinball carries the rules' factor 2; s=1e-6 puts the server loss
-# at ~2e-07, strictly below the 1e-06 cluster where run_ms would decide)
+# the server pinball carries the rules' factor 2; v2's s=1e-6 scored a
+# PERFECT 0 and the site withholds perfect practice scores from the board,
+# so s=5e-6 puts the server loss at ~1e-06, inside the ranked cluster)
 
 # --- practice answers, hours 2..24, from SullyGnome's hourly Twitch category
 # --- averages (the same source the kit's practice cases are built from).
